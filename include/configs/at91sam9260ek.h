@@ -230,36 +230,20 @@
 
 /* bootstrap + u-boot + env + linux in nandflash */
 #define CONFIG_ENV_IS_IN_NAND	1
-#define CONFIG_ENV_OFFSET		0xc0000
-#define CONFIG_ENV_OFFSET_REDUND	0x100000
-#define CONFIG_ENV_SIZE		0x20000		/* 1 sector = 128 kB */
-#define CONFIG_BOOTCOMMAND	"nand read 0x22000000 0x200000 0x300000; bootm"
-#define CONFIG_BOOTARGS							\
-	"console=ttyS0,115200 earlyprintk "				\
-	"mtdparts=atmel_nand:256k(bootstrap)ro,512k(uboot)ro,"		\
-	"256k(env),256k(env_redundant),256k(spare),"			\
-	"512k(dtb),6M(kernel)ro,-(rootfs) "				\
-	"root=/dev/mtdblock7 rw rootfstype=jffs2"
+#define CONFIG_ENV_OFFSET		0x00840000
+//#define CONFIG_ENV_OFFSET_REDUND	0x00880000 - redundand config disabled for now
+#define CONFIG_ENV_SIZE		0x40000		/* 1 sector = 256 kB */
+#define CONFIG_BOOTCOMMAND	"nand read 0x22000000 0xA0000 0x200000; bootm"
+#define CONFIG_BOOTARGS		"console=ttyS0,115200 "			\
+				"root=/dev/mtdblock5 "			\
+				"mtdparts=atmel_nand:128k(bootstrap)ro,"	\
+				"256k(uboot)ro,128k(env1)ro,"		\
+				"128k(env2)ro,2M(linux),-(root) "	\
+				"rw rootfstype=jffs2"
 
-#else	/* CONFIG_SYS_USE_MMC */
-/* bootstrap + u-boot + env + linux in mmc */
-#define CONFIG_ENV_IS_IN_MMC
-/* For FAT system, most cases it should be in the reserved sector */
-#define CONFIG_ENV_OFFSET		0x2000
-#define CONFIG_ENV_SIZE			0x1000
-#define CONFIG_SYS_MMC_ENV_DEV		0
-
-#define CONFIG_BOOTCOMMAND						\
-	"fatload mmc 0:1 0x22000000 uImage; bootm"
-#define CONFIG_BOOTARGS							\
-	"console=ttyS0,115200 earlyprintk "				\
-	"mtdparts=atmel_nand:256k(bootstrap)ro,512k(uboot)ro,"		\
-	"256k(env),256k(env_redundant),256k(spare),"			\
-	"512k(dtb),6M(kernel)ro,-(rootfs) "				\
-	"root=/dev/mmcblk0p2 rw rootfstype=ext4 rootwait"
 #endif
 
-#define CONFIG_SYS_PROMPT		"U-Boot> "
+#define CONFIG_SYS_PROMPT		"enyon> "
 #define CONFIG_SYS_CBSIZE		256
 #define CONFIG_SYS_MAXARGS		16
 #define CONFIG_SYS_PBSIZE		(CONFIG_SYS_CBSIZE + sizeof(CONFIG_SYS_PROMPT) + 16)
